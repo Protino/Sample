@@ -5,7 +5,7 @@
 
     <fragment
         android:id="@+id/login_fragment"
-        android:name="io.example.sample.LoginFragment"
+        android:name="io.example.sample.ui.LoginFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </FrameLayout>

@@ -1,5 +1,6 @@
 package io.example.sample.ui
 
+import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -12,8 +13,20 @@ import io.example.sample.databinding.FragmentLoginBinding
 
 class LoginFragment : Fragment() {
 
+    private lateinit var viewModel: LoginViewModel
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val factory = LoginViewModelFactory(context!!.applicationContext)
+        viewModel = ViewModelProviders.of(this, factory)
+                .get<LoginViewModel>(LoginViewModel::class.java)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentLoginBinding>(inflater, R.layout.fragment_login, container, false)
+        binding.run {
+            setLifecycleOwner(this@LoginFragment)
+            viewmodel = viewModel
+        }
         return binding.root
     }
 }

@@ -2,12 +2,8 @@ package io.example.sample.ui
 
 import android.arch.lifecycle.*
 import android.content.Context
-import io.example.sample.api.model.User
-import io.example.sample.api.model.UserForm
-import io.example.sample.common.Event
-import io.example.sample.repository.RepositoryResponse
-import io.example.sample.repository.SampleRepository
 import io.example.sample.utils.*
+import io.example.sample.repository.SampleRepository
 
 /**
  * context here is the applicationContext.

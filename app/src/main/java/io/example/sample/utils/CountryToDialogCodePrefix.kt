@@ -1,6 +1,5 @@
 package io.example.sample.utils
 
-
 object CountryToDialogCodePrefix {
 
     private val dialingCodeMap = linkedMapOf<String, String>()

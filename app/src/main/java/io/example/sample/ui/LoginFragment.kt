@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import io.example.sample.R
 
 import io.example.sample.databinding.FragmentLoginBinding
+import io.example.sample.repository.SampleRepository
 
 class LoginFragment : Fragment() {
 

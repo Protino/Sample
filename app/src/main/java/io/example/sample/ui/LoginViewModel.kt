@@ -2,6 +2,11 @@ package io.example.sample.ui
 
 import android.arch.lifecycle.*
 import android.content.Context
+import io.example.sample.api.model.User
+import io.example.sample.api.model.UserForm
+import io.example.sample.common.Event
+import io.example.sample.repository.RepositoryResponse
+import io.example.sample.repository.SampleRepository
 import io.example.sample.utils.*
 
 /**
@@ -9,21 +14,20 @@ import io.example.sample.utils.*
  */
 class LoginViewModel(context: Context) : ViewModel() {
 
-    val emailPhoneText: MutableLiveData<String> = MutableLiveData()
-    val passwordText: MutableLiveData<String> = MutableLiveData()
+    val emailPhoneText = MutableLiveData<String>()
+    val passwordText = MutableLiveData<String>()
 
     val dialingCodes: ArrayList<String> = CountryToDialogCodePrefix.getAllCodes()
-    val selectedDialogCodePosition: MutableLiveData<Int> = MutableLiveData()
+    val selectedDialogCodePosition = MutableLiveData<Int>()
 
     val isPhoneEntered: LiveData<Boolean> = Transformations.map(emailPhoneText) {
         return@map isPhoneNumber(it)
     }
 
-
     // Error states
-    val emailError: MutableLiveData<Boolean> = MutableLiveData()
-    val dialingCodeError: MutableLiveData<Boolean> = MutableLiveData()
-    val passwordError: MutableLiveData<PasswordError> = MutableLiveData()
+    val emailError = MutableLiveData<Boolean>()
+    val dialingCodeError = MutableLiveData<Boolean>()
+    val passwordError = MutableLiveData<PasswordError>()
 
     init {
 
@@ -36,29 +40,41 @@ class LoginViewModel(context: Context) : ViewModel() {
     }
 
     fun onSubmit() {
-        var isError = false
-        if (isPhoneEntered.value != true) {
-            //Validate email
-            emailError.value = !isValidEmail(emailPhoneText.value)
-            isError = true
+        var id = emailPhoneText.value
+        val password = passwordText.value
+
+        if (isValidForm(id, password)) {
+            if (isPhoneEntered.value == true) {
+                id = dialingCodes[selectedDialogCodePosition.value!!] + id
+            }
+            SampleRepository.loginUser(id!!, password!!)
         }
+    }
+
+    private fun isValidForm(id: String?, password: String?): Boolean {
+        var isError = false
 
         if (selectedDialogCodePosition.value == null) {
-            // No dialog code selected
+            // No dialing code selected
             dialingCodeError.value = true
             isError = true
         }
 
-        passwordError.value = isValidPassword(passwordText.value)
-
-        if (!isError && passwordError.value == PasswordError.NONE) {
-            //make api call
+        if (isPhoneEntered.value != true) {
+            //Validate email
+            emailError.value = !isValidEmail(id)
+            isError = true
+        } else {
+            emailError.value = false
         }
+
+        passwordError.value = isValidPassword(password)
+        return !isError && passwordError.value == PasswordError.NONE
     }
 
 }
 
-class LoginViewModelFactory(var context: Context)
+class LoginViewModelFactory(private val context: Context)
     : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

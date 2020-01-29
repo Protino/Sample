@@ -1,27 +1,29 @@
 package io.example.sample.ui
 
-import android.arch.lifecycle.ViewModelProviders
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import io.example.sample.R
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import io.example.sample.databinding.FragmentLoginBinding
+import io.example.sample.repository.LoginModel
 
 class LoginFragment : Fragment() {
 
     private lateinit var viewModel: LoginViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val factory = LoginViewModelFactory(context!!.applicationContext)
+
+        val factory = LoginViewModelFactory(activity!!.application, LoginModel())
+
         viewModel = ViewModelProviders.of(this, factory)
                 .get<LoginViewModel>(LoginViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val binding = DataBindingUtil.inflate<FragmentLoginBinding>(inflater, R.layout.fragment_login, container, false)
+        val binding = FragmentLoginBinding.inflate(inflater)
         binding.run {
             setLifecycleOwner(this@LoginFragment)
             viewmodel = viewModel

@@ -1,14 +1,16 @@
 package io.example.sample.ui
 
-import android.arch.lifecycle.*
 import android.content.Context
-import io.example.sample.utils.*
-import io.example.sample.repository.SampleRepository
+import androidx.lifecycle.*
+import io.example.sample.repository.LoginModel
+import io.example.sample.utils.CountryToDialogCodePrefix
+import io.example.sample.utils.PasswordError
+import io.example.sample.utils.getDialingCode
 
 /**
  * context here is the applicationContext.
  */
-class LoginViewModel(context: Context) : ViewModel() {
+class LoginViewModel(context: Context, private val model: LoginModel) : ViewModel() {
 
     val emailPhoneText = MutableLiveData<String>()
     val passwordText = MutableLiveData<String>()
@@ -17,13 +19,18 @@ class LoginViewModel(context: Context) : ViewModel() {
     val selectedDialogCodePosition = MutableLiveData<Int>()
 
     val isPhoneEntered: LiveData<Boolean> = Transformations.map(emailPhoneText) {
-        return@map isPhoneNumber(it)
+        return@map model.isPhoneNumber(it)
     }
 
     // Error states
     val emailError = MutableLiveData<Boolean>()
     val dialingCodeError = MutableLiveData<Boolean>()
     val passwordError = MutableLiveData<PasswordError>()
+
+    // Username field after login is successful
+    val userName: LiveData<String> = Transformations.map(model.getLoginResult()) {
+        it.data.name  //Transformations
+    }
 
     init {
 
@@ -43,7 +50,7 @@ class LoginViewModel(context: Context) : ViewModel() {
             if (isPhoneEntered.value == true) {
                 id = dialingCodes[selectedDialogCodePosition.value!!] + id
             }
-            SampleRepository.loginUser(id!!, password!!)
+            model.loginUser(id!!, password!!)
         }
     }
 
@@ -58,22 +65,22 @@ class LoginViewModel(context: Context) : ViewModel() {
 
         if (isPhoneEntered.value != true) {
             //Validate email
-            emailError.value = !isValidEmail(id)
-            isError = true
+            isError = !model.isValidEmail(id)
+            emailError.value = isError
         } else {
             emailError.value = false
         }
 
-        passwordError.value = isValidPassword(password)
+        passwordError.value = model.isValidPassword(password)
         return !isError && passwordError.value == PasswordError.NONE
     }
 
 }
 
-class LoginViewModelFactory(private val context: Context)
+class LoginViewModelFactory(private val context: Context, private val model: LoginModel)
     : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return LoginViewModel(context) as T
+        return LoginViewModel(context, model) as T
     }
 }

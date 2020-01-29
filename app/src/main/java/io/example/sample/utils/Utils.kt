@@ -40,28 +40,6 @@ private fun getDeviceCountryCode(context: Context): String {
     }
 }
 
-fun isPhoneNumber(text: String?): Boolean {
-    return text?.matches("^[0-9]{10}\$".toRegex()) ?: false
-}
-
-fun isValidEmail(email: String?): Boolean {
-    return email != null && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
-}
-
-/**
- * Does not use long regex - ^(?=.*\d)(?!.+[!@#$%^&*`=(){}|:\\"?<>,./;'_+~-])(?=.*[A-Z]).{8,}$
- * Since that is hard to read, maintain and debug
- *
- */
-fun isValidPassword(password: String?): PasswordError {
-    if (password == null || password.length < 8) return PasswordError.MINIMUM_LENGTH
-    if (!password.matches("^[a-zA-Z0-9]*$".toRegex())) return PasswordError.NO_SPECIAL
-    if (!password.matches(".*[A-Z].*".toRegex())) return PasswordError.UPPERCASE_MISSING
-    if (!password.matches(".*[0-9].*".toRegex())) return PasswordError.DIGIT_MISSING
-
-    return PasswordError.NONE
-}
-
 enum class PasswordError {
     NONE,
     MINIMUM_LENGTH,

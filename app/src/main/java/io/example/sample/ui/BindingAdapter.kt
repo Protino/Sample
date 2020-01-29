@@ -1,8 +1,8 @@
 package io.example.sample.ui
 
-import android.databinding.BindingAdapter
-import android.support.design.widget.TextInputLayout
-import android.support.v7.widget.AppCompatSpinner
+import androidx.databinding.BindingAdapter
+import com.google.android.material.textfield.TextInputLayout
+import androidx.appcompat.widget.AppCompatSpinner
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import io.example.sample.R
